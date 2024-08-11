@@ -45,6 +45,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      name: Restore Cached Dockerfile
+        uses: actions/cache@v3
+        with:
+          path: ./Dockerfile
+          key: ${{ runner.os }}-dockerfile-${{ github.sha }}
+
       - name: Google Auth
         id: auth
         uses: 'google-github-actions/auth@v0.7.0'
