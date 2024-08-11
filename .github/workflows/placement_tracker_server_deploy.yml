@@ -45,7 +45,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      name: Restore Cached Dockerfile
+      - name: Restore Cached Dockerfile
         uses: actions/cache@v3
         with:
           path: ./Dockerfile
