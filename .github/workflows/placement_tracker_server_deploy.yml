@@ -35,6 +35,31 @@ env:
   CLOUD_RUN_SERVICE: placement-tracker-server
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Adjust this to your project's Node.js version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
   build:
     permissions:
       contents: 'read'
@@ -82,7 +107,7 @@ jobs:
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_PREFIX }}/${{ env.SERVICE }}:${{ github.sha }}"
 
   deploy:
-    needs: build
+    needs: [build,test]
     permissions:
       contents: 'read'
       id-token: 'write'
